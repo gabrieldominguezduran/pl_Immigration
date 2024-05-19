@@ -19,7 +19,15 @@
 <style>
 	.main {
 		width: 100vw;
-		height: 80vh;
+		height: 60vh;
+		margin: 3rem auto;
 		overflow: hidden;
+	}
+
+	@media (max-width: 600px) {
+		.main {
+			height: 50vh;
+			margin: 0;
+		}
 	}
 </style>
