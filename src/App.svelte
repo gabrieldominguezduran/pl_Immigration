@@ -45,7 +45,6 @@
 		height: 100vh;
 		overflow: auto;
 		scroll-behavior: smooth;
-		background-color: transparent;
 	}
 
 	.map-background {
@@ -54,11 +53,10 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		z-index: -1;
 	}
 
 	.text-container {
+		position: relative;
 		width: 100%;
-		background-color: transparent;
 	}
 </style>

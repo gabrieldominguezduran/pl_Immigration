@@ -47,7 +47,6 @@
 	let bubbles = [];
 	$: {
 		if (geojson && currentYear) {
-			// Asegurarse de que geojson esté cargado y currentYear esté definido
 			const countryData = countries
 				.map((country) => {
 					const visaTotal = getVisaTotal(country.properties.ADMIN);
@@ -72,7 +71,7 @@
 
 	function handleMouseOver(event) {
 		const element = event.currentTarget;
-		element.parentNode.appendChild(element); // Mueve el elemento al final del padre, llevándolo a la cima
+		element.parentNode.appendChild(element);
 	}
 
 	$: totalVisas =

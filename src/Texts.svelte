@@ -39,7 +39,6 @@
 		</div>
 	</section>
 	<section class="map-section"></section>
-	<!-- Sección vacía para mostrar el mapa -->
 	<section
 		class="year-section"
 		data-year="2023"
@@ -56,13 +55,11 @@
 		</div>
 	</section>
 	<section class="map-section"></section>
-	<!-- Sección vacía para mostrar el mapa -->
 </div>
 
 <style>
 	.texts-container {
 		width: 100%;
-		background-color: transparent;
 	}
 
 	.year-section {
