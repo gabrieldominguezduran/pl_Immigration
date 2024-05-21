@@ -13,7 +13,6 @@
 	function handleScroll() {
 		const sections = document.querySelectorAll('.year-section');
 		const scrollPosition = window.scrollY + window.innerHeight / 2;
-
 		for (const section of sections) {
 			const { top, bottom } = section.getBoundingClientRect();
 			if (top <= scrollPosition && bottom >= scrollPosition) {
@@ -25,16 +24,18 @@
 			}
 		}
 	}
+
+	window.addEventListener('scroll', handleScroll);
 </script>
 
-<div
-	class="app-container"
-	on:scroll={handleScroll}
->
+<div class="app-container">
 	<div class="map-background">
 		<Map currentYear={currentYear} />
 	</div>
-	<div class="text-container">
+	<div
+		class="text-container"
+		on:scroll={handleScroll}
+	>
 		<Texts on:yearChange={updateYear} />
 	</div>
 </div>
@@ -43,7 +44,6 @@
 	.app-container {
 		position: relative;
 		height: 100vh;
-		overflow: auto;
 		scroll-behavior: smooth;
 	}
 
@@ -58,5 +58,6 @@
 	.text-container {
 		position: relative;
 		width: 100%;
+		pointer-events: none;
 	}
 </style>

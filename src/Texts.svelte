@@ -55,6 +55,22 @@
 		</div>
 	</section>
 	<section class="map-section"></section>
+	<section
+		class="year-section"
+		data-year="2024"
+	>
+		<div class="text">
+			<h2>2024</h2>
+			<p>Jhon Doe:</p>
+			<blockquote>
+				“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+				commodo consequat.”
+			</blockquote>
+		</div>
+	</section>
+	<section class="map-section"></section>
 </div>
 
 <style>
@@ -71,6 +87,7 @@
 		flex-direction: column;
 		justify-content: center;
 		background-color: rgba(255, 255, 255, 0.8);
+		pointer-events: auto;
 	}
 
 	.map-section {
