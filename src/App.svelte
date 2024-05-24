@@ -6,37 +6,17 @@
 
 	let currentYear = '2018';
 
-	function updateYear(event) {
-		currentYear = event.detail.year;
+	function handleYearChange(newYear) {
+		currentYear = newYear;
 	}
-
-	function handleScroll() {
-		const sections = document.querySelectorAll('.year-section');
-		const scrollPosition = window.scrollY + window.innerHeight / 2;
-		for (const section of sections) {
-			const { top, bottom } = section.getBoundingClientRect();
-			if (top < scrollPosition && bottom >= scrollPosition) {
-				const year = section.dataset.year;
-				if (year !== currentYear) {
-					currentYear = year;
-					break;
-				}
-			}
-		}
-	}
-
-	window.addEventListener('scroll', handleScroll);
 </script>
 
 <div class="app-container">
 	<div class="map-background">
 		<Map currentYear={currentYear} />
 	</div>
-	<div
-		class="text-container"
-		on:scroll={handleScroll}
-	>
-		<Texts on:yearChange={updateYear} />
+	<div class="text-container">
+		<Texts onYearChange={handleYearChange} />
 	</div>
 </div>
 
@@ -59,5 +39,6 @@
 		position: relative;
 		width: 100%;
 		pointer-events: none;
+		color-scheme: dark;
 	}
 </style>

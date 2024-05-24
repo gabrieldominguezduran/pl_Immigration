@@ -5,6 +5,8 @@
 	import totals from './data/totals.json';
 
 	export let currentYear;
+	let numOfCountriesOptions = [10, 15, 20];
+	let numOfCountries = numOfCountriesOptions.at(0);
 
 	let width, height;
 
@@ -63,7 +65,7 @@
 				})
 				.filter((d) => d !== null)
 				.sort((a, b) => b.visaTotal - a.visaTotal)
-				.slice(0, 10);
+				.slice(0, numOfCountries);
 
 			bubbles = countryData.map((d, i) => ({ ...d, rank: i + 1 }));
 		}
@@ -76,10 +78,16 @@
 
 	$: totalVisas =
 		(totals.find((total) => total.year === currentYear) || {}).Total || 0;
+
+	function handleNumOfCountriesChange(event) {
+		numOfCountries = parseInt(event.target.value);
+	}
 </script>
 
 <div class="title">
-	<h1>Los 10 países con más visas en el año {currentYear}</h1>
+	<h1>
+		Los {`${numOfCountries}`} países con más visas en el año {currentYear}
+	</h1>
 </div>
 
 <ResponsiveSvg
@@ -105,15 +113,15 @@
 				on:focus={handleMouseOver}
 			>
 				<circle
-					r={15 + (10 - rank) * 2}
-					fill="rgba(255, 87, 34, 0.8)"
+					r={10 + (numOfCountries - rank) * 1}
+					fill="rgba(254, 55, 13, 0.8)"
 					class="bubble bubble-{id}"
 				/>
 				<text
 					x="0"
 					y="7"
 					text-anchor="middle"
-					fill="#F9DF04"
+					fill="#D4FE0D"
 					dy="1rem"
 					class="bubble-text bubble-text-{id}"
 				>
@@ -127,7 +135,7 @@
 					x="0"
 					y={-8}
 					text-anchor="middle"
-					fill="#F9DF04"
+					fill="#D4FE0D"
 					dy="0"
 					class="hover-text"
 				>
@@ -150,6 +158,23 @@
 	{/each}
 </ResponsiveSvg>
 
+<div class="num-of-countries-selector">
+	<label for="numOfCountries">Número de países:</label>
+	{#each numOfCountriesOptions as option}
+		<label>
+			<input
+				type="radio"
+				name="numOfCountries"
+				value={option}
+				bind:group={numOfCountries}
+				on:change={handleNumOfCountriesChange}
+				checked={numOfCountries === option}
+			/>
+			{option}
+		</label>
+	{/each}
+</div>
+
 <div class="total-visas">
 	Total de visas en {currentYear}: {totalVisas}
 </div>
@@ -168,8 +193,8 @@
 	}
 
 	path {
-		fill: rgb(0, 105, 92);
-		stroke: #ffffff;
+		fill: rgb(218, 247, 166);
+		stroke: #444645;
 		cursor: pointer;
 	}
 
@@ -181,13 +206,13 @@
 	}
 
 	.bubble-text {
-		font: 0.6rem sans-serif;
+		font: 0.8rem sans-serif;
 		pointer-events: none;
 		transition: font-size 0.3s;
 	}
 
 	.hover-text {
-		font: 0.6rem sans-serif;
+		font: 1rem sans-serif;
 		pointer-events: none;
 		display: none;
 	}
@@ -205,9 +230,27 @@
 		font-size: 0.8rem;
 	}
 
+	.num-of-countries-selector {
+		text-align: center;
+		margin-top: 1rem;
+	}
+
+	.num-of-countries-selector label {
+		margin: 0 0.3rem;
+		font-size: 1rem;
+	}
+
+	.num-of-countries-selector input {
+		margin-right: 0.3rem;
+	}
+
 	@media (max-width: 600px) {
 		.title {
 			font-size: 1.2rem;
+		}
+
+		.bubble-text {
+			font-size: 0.6rem;
 		}
 	}
 </style>

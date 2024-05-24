@@ -1,4 +1,36 @@
 <script>
+	import { onMount } from 'svelte';
+
+	export let onYearChange;
+
+	let yearSections;
+
+	onMount(() => {
+		yearSections = document.querySelectorAll('.year-section');
+
+		const options = {
+			root: null,
+			rootMargin: '0px',
+			threshold: 0.6, // Adjust this value based on when you want to trigger the change
+		};
+
+		const callback = (entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					const year = entry.target.getAttribute('data-year');
+					onYearChange(year);
+				}
+			});
+		};
+
+		const observer = new IntersectionObserver(callback, options);
+
+		yearSections.forEach((section) => observer.observe(section));
+
+		return () => {
+			yearSections.forEach((section) => observer.unobserve(section));
+		};
+	});
 </script>
 
 <div class="texts-container">
@@ -113,7 +145,7 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		background-color: rgba(255, 255, 255, 0.8);
+		background-color: rgba(16, 16, 16, 0.891);
 		pointer-events: auto;
 	}
 
@@ -123,7 +155,7 @@
 
 	blockquote {
 		margin: 1.3rem 0;
-		color: #555;
+		color: #c5c3c3;
 	}
 
 	.text {
