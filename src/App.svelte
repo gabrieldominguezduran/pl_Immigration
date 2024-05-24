@@ -4,7 +4,7 @@
 	import Map from './Map.svelte';
 	import Texts from './Texts.svelte';
 
-	let currentYear = '2022';
+	let currentYear = '2018';
 
 	function updateYear(event) {
 		currentYear = event.detail.year;
@@ -15,7 +15,7 @@
 		const scrollPosition = window.scrollY + window.innerHeight / 2;
 		for (const section of sections) {
 			const { top, bottom } = section.getBoundingClientRect();
-			if (top <= scrollPosition && bottom >= scrollPosition) {
+			if (top < scrollPosition && bottom >= scrollPosition) {
 				const year = section.dataset.year;
 				if (year !== currentYear) {
 					currentYear = year;

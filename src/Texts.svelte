@@ -1,28 +1,71 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-
-	let sections;
-
-	function handleScroll() {
-		const scrollPosition = window.scrollY + window.innerHeight / 2;
-
-		for (const section of sections.children) {
-			const { top, bottom } = section.getBoundingClientRect();
-			if (top <= scrollPosition && bottom >= scrollPosition) {
-				dispatch('yearChange', { year: section.dataset.year });
-				break;
-			}
-		}
-	}
 </script>
 
-<div
-	class="texts-container"
-	bind:this={sections}
-	on:scroll={handleScroll}
->
+<div class="texts-container">
+	<section
+		class="year-section"
+		data-year="2018"
+	>
+		<div class="text">
+			<h2>2018</h2>
+			<p>Jhon Doe:</p>
+			<blockquote>
+				“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+				commodo consequat.”
+			</blockquote>
+		</div>
+	</section>
+	<section class="map-section"></section>
+	<section
+		class="year-section"
+		data-year="2019"
+	>
+		<div class="text">
+			<h2>2019</h2>
+			<p>Jhon Doe:</p>
+			<blockquote>
+				“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+				commodo consequat.”
+			</blockquote>
+		</div>
+	</section>
+	<section class="map-section"></section>
+	<section
+		class="year-section"
+		data-year="2020"
+	>
+		<div class="text">
+			<h2>2020</h2>
+			<p>Jhon Doe:</p>
+			<blockquote>
+				“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+				commodo consequat.”
+			</blockquote>
+		</div>
+	</section>
+	<section class="map-section"></section>
+	<section
+		class="year-section"
+		data-year="2021"
+	>
+		<div class="text">
+			<h2>2021</h2>
+			<p>Jhon Doe:</p>
+			<blockquote>
+				“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+				commodo consequat.”
+			</blockquote>
+		</div>
+	</section>
+	<section class="map-section"></section>
 	<section
 		class="year-section"
 		data-year="2022"
@@ -46,22 +89,6 @@
 		<div class="text">
 			<h2>2023</h2>
 			<p>Donald Tusk:</p>
-			<blockquote>
-				“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-				commodo consequat.”
-			</blockquote>
-		</div>
-	</section>
-	<section class="map-section"></section>
-	<section
-		class="year-section"
-		data-year="2024"
-	>
-		<div class="text">
-			<h2>2024</h2>
-			<p>Jhon Doe:</p>
 			<blockquote>
 				“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
 				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
