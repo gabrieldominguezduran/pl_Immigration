@@ -1,8 +1,8 @@
 <script>
 	// @ts-nocheck
 
-	import Map from './Map.svelte';
-	import Texts from './Texts.svelte';
+	import Map from './components/Map.svelte';
+	import Texts from './components/Texts.svelte';
 
 	let currentYear = '2018';
 

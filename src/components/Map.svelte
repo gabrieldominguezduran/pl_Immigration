@@ -1,8 +1,8 @@
 <script>
 	import { json, geoNaturalEarth1, geoPath } from 'd3';
 	import ResponsiveSvg from './ResponsiveSVG.svelte';
-	import visasData from './data/visas.json';
-	import totals from './data/totals.json';
+	import visasData from '../data/visas.json';
+	import totals from '../data/totals.json';
 
 	export let currentYear;
 	let numOfCountriesOptions = [10, 15, 20];
