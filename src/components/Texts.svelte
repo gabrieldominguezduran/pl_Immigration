@@ -1,37 +1,6 @@
 <script>
-	import { onMount } from 'svelte';
-	import Quote from './Quotes.svelte';
 	import quotes from '../data/quotes.json';
-	export let onYearChange;
-
-	let yearSections;
-
-	onMount(() => {
-		yearSections = document.querySelectorAll('.year-section');
-
-		const options = {
-			root: null,
-			rootMargin: '0px',
-			threshold: 0.6, // Adjust this value based on when you want to trigger the change
-		};
-
-		const callback = (entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					const year = entry.target.getAttribute('data-year');
-					onYearChange(year);
-				}
-			});
-		};
-
-		const observer = new IntersectionObserver(callback, options);
-
-		yearSections.forEach((section) => observer.observe(section));
-
-		return () => {
-			yearSections.forEach((section) => observer.unobserve(section));
-		};
-	});
+	import Quote from './Quotes.svelte';
 
 	let groupedQuotes = {};
 	for (let year in quotes) {
@@ -40,30 +9,26 @@
 </script>
 
 <div class="texts-container">
-	{#each Object.keys(groupedQuotes) as year}
-		<section
-			class="year-section"
-			data-year={year}
-		>
-			<div class="text">
-				<h2>{year}</h2>
-				<div class="quote-container">
+	<section class="year-section">
+		<div class="text">
+			{#each Object.keys(groupedQuotes) as year}
+				<div class="year-quote">
+					<h3>{year}</h3>
 					{#each groupedQuotes[year] as quote}
 						<div class="quote">
 							<Quote
 								author={quote.author}
-								position={quote.position}
-								quote={quote.quote_english}
+								position={quote.position_spanish}
+								quote={quote.quote_spanish}
 								source={quote.source}
 								source_link={quote.source_link}
 							/>
 						</div>
 					{/each}
 				</div>
-			</div>
-		</section>
-		<section class="map-section"></section>
-	{/each}
+			{/each}
+		</div>
+	</section>
 </div>
 
 <style>
@@ -77,7 +42,6 @@
 
 	.year-section {
 		padding: 20px;
-		height: 100vh;
 		font-size: 2rem;
 		box-sizing: border-box;
 		display: flex;
@@ -87,29 +51,29 @@
 		pointer-events: auto;
 	}
 
-	.map-section {
-		height: 100vh;
-	}
-
 	.text {
-		max-width: 80%;
+		display: flex;
+		gap: 1rem;
 		margin: 0 auto;
 		color: #fff;
 	}
 
-	h2 {
-		text-align: center;
-		color: #ffd700;
+	.year-quote {
 		margin-bottom: 2rem;
 	}
 
-	.quote-container {
-		display: flex;
-		justify-content: space-between;
+	h3 {
+		color: #ffd700;
+		margin-bottom: 1rem;
 	}
 
 	.quote {
-		flex: 1;
-		margin: 0 1rem;
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 1200px) {
+		.text {
+			flex-wrap: wrap;
+		}
 	}
 </style>

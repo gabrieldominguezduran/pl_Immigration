@@ -1,18 +1,18 @@
 <script>
-	import { json, geoNaturalEarth1, geoPath } from 'd3';
-	import ResponsiveSvg from './ResponsiveSVG.svelte';
+	import { json, geoNaturalEarth1, geoPath, selectAll } from 'd3';
 	import visasData from '../data/visas.json';
 	import totals from '../data/totals.json';
 
 	export let currentYear;
-	let numOfCountriesOptions = [10, 15, 20];
-	let numOfCountries = numOfCountriesOptions.at(0);
-
-	let width, height;
-
+	export let onYearChange;
+	let width = 800;
+	let height = 500;
 	const geojsonPath =
 		'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson';
 	const unwantedCountries = ['Antarctica', 'Greenland'];
+	let geojson;
+
+	json(geojsonPath).then((data) => (geojson = filterGeoJSON(data)));
 
 	function filterGeoJSON(data) {
 		return {
@@ -23,13 +23,10 @@
 		};
 	}
 
-	let geojson;
-	json(geojsonPath).then((data) => (geojson = filterGeoJSON(data)));
-
 	function getVisaTotal(countryName) {
 		const yearData = visasData[currentYear] || [];
 		const country = yearData.find((d) => d.Country === countryName);
-		return country ? country.Total : null;
+		return country ? country.Total : 0;
 	}
 
 	$: projection = geoNaturalEarth1().fitSize([width, height], geojson);
@@ -46,211 +43,230 @@
 		});
 	}
 
-	let bubbles = [];
+	let topCountries = [];
 	$: {
 		if (geojson && currentYear) {
-			const countryData = countries
-				.map((country) => {
-					const visaTotal = getVisaTotal(country.properties.ADMIN);
-					if (visaTotal !== null) {
-						const centroid = pathGenerator.centroid(country);
-						return {
-							countryName: country.properties.ADMIN,
-							visaTotal,
-							centroid,
-							id: country.id,
-						};
-					}
-					return null;
-				})
-				.filter((d) => d !== null)
+			topCountries = countries
+				.map((country) => ({
+					...country,
+					visaTotal: getVisaTotal(country.properties.ADMIN),
+				}))
+				.filter((d) => d.visaTotal > 0)
 				.sort((a, b) => b.visaTotal - a.visaTotal)
-				.slice(0, numOfCountries);
-
-			bubbles = countryData.map((d, i) => ({ ...d, rank: i + 1 }));
+				.slice(0, 20);
 		}
 	}
 
-	function handleMouseOver(event) {
-		const element = event.currentTarget;
-		element.parentNode.appendChild(element);
+	function handleYearChange(event) {
+		onYearChange(event.target.value);
 	}
 
-	$: totalVisas =
-		(totals.find((total) => total.year === currentYear) || {}).Total || 0;
+	function handleMouseOver(event, countryName) {
+		selectAll('.country-path').attr('opacity', (d) => {
+			if (!d || !d.properties) return 0.3;
+			return topCountries.find(
+				(tc) => tc.properties.ADMIN === d.properties.ADMIN,
+			)
+				? 1
+				: 0.3;
+		});
+		selectAll('.bar')
+			.attr('opacity', (d) => {
+				if (!d || !d.properties) return 0.5;
+				return d.properties.ADMIN === countryName ? 1 : 0.5;
+			})
+			.attr('fill', (d) => {
+				if (!d || !d.properties) return '#FE3713';
+				return d.properties.ADMIN === countryName ? '#FFD700' : '#FE3713';
+			});
+		selectAll('.country-path')
+			.attr('fill', (d) => {
+				if (!d || !d.properties) return '#FFFFFF';
+				return d.properties.ADMIN === countryName
+					? '#FFD700'
+					: topCountries.find(
+								(tc) => tc.properties.ADMIN === d.properties.ADMIN,
+						  )
+						? '#FFD700'
+						: '#FFFFFF';
+			})
+			.attr('stroke', (d) => {
+				if (!d || !d.properties) return '#444645';
+				return d.properties.ADMIN === countryName ? '#FFD700' : '#444645';
+			});
+	}
 
-	function handleNumOfCountriesChange(event) {
-		numOfCountries = parseInt(event.target.value);
+	function handleMouseOut() {
+		selectAll('.country-path')
+			.attr('fill', (d) => {
+				if (!d || !d.properties) return '#FFFFFF';
+				return topCountries.find(
+					(tc) => tc.properties.ADMIN === d.properties.ADMIN,
+				)
+					? '#FFD700'
+					: '#FFFFFF';
+			})
+			.attr('opacity', 1);
+		selectAll('.bar').attr('fill', '#FE3713').attr('opacity', 1);
 	}
 </script>
 
 <div class="title">
-	<h1>
-		Los {`${numOfCountries}`} países con más visas en el año {currentYear}
-	</h1>
+	<h1>Los 20 países con más visas en el año {currentYear}</h1>
 </div>
 
-<ResponsiveSvg
-	bind:width={width}
-	bind:height={height}
->
-	{#each countries as { id, path, properties }}
-		<path
-			d={path}
-			role="button"
-			tabindex="0"
-		/>
-	{/each}
+<div class="controls">
+	<label for="year">Select Year:</label>
+	<select
+		id="year"
+		on:change={handleYearChange}
+	>
+		{#each Object.keys(visasData) as year}
+			<option
+				value={year}
+				selected={year === currentYear}>{year}</option
+			>
+		{/each}
+	</select>
+</div>
 
-	{#each bubbles as { countryName, visaTotal, centroid, id, rank }}
-		{#if centroid}
-			<g
-				transform={`translate(${centroid[0]}, ${centroid[1]})`}
-				class="bubble-group"
-				on:mouseover={handleMouseOver}
+<div class="visualization">
+	<svg
+		class="bar-chart"
+		width={width / 2}
+		height={height}
+	>
+		{#each topCountries as { properties, visaTotal }, i}
+			<rect
+				class="bar"
+				x={0}
+				y={i * 22}
+				width={visaTotal / 500}
+				height={20}
+				fill="#FFD700"
+				on:mouseover={(event) => handleMouseOver(event, properties.ADMIN)}
+				on:mouseout={handleMouseOut}
 				role="button"
 				tabindex="0"
-				on:focus={handleMouseOver}
-			>
-				<circle
-					r={10 + (numOfCountries - rank) * 1}
-					fill="rgba(254, 55, 13, 0.8)"
-					class="bubble bubble-{id}"
-				/>
-				<text
-					x="0"
-					y="7"
-					text-anchor="middle"
-					fill="#D4FE0D"
-					dy="1rem"
-					class="bubble-text bubble-text-{id}"
-				>
-					<tspan
-						x="0"
-						dy="-.6em"
-						font-size="0.7em">{rank}</tspan
-					>
-				</text>
-				<text
-					x="0"
-					y={-8}
-					text-anchor="middle"
-					fill="#D4FE0D"
-					dy="0"
-					class="hover-text"
-				>
-					<tspan
-						x="0"
-						dy="-.6em"
-						font-size="0.7em">{rank}</tspan
-					>
-					<tspan
-						x="0"
-						dy="1.2em">{countryName}</tspan
-					>
-					<tspan
-						x="0"
-						dy="1.2em">Visas: {visaTotal}</tspan
-					>
-				</text>
-			</g>
-		{/if}
-	{/each}
-</ResponsiveSvg>
-
-<div class="num-of-countries-selector">
-	<label for="numOfCountries">Número de países:</label>
-	{#each numOfCountriesOptions as option}
-		<label>
-			<input
-				type="radio"
-				name="numOfCountries"
-				value={option}
-				bind:group={numOfCountries}
-				on:change={handleNumOfCountriesChange}
-				checked={numOfCountries === option}
+				on:focus={(event) => handleMouseOver(event, properties.ADMIN)}
+				on:blur={handleMouseOut}
 			/>
-			{option}
-		</label>
-	{/each}
+			<text
+				x={visaTotal / 500 + 5}
+				y={i * 22 + 15}
+				fill="white">{properties.ADMIN}: {visaTotal}</text
+			>
+		{/each}
+	</svg>
+	<div class="map">
+		<svg
+			width="100%"
+			height="100%"
+			viewBox={`0 0 ${width} ${height}`}
+			preserveAspectRatio="xMidYMid meet"
+		>
+			{#each countries as { id, path, properties }}
+				<path
+					class="country-path"
+					d={path}
+					fill={topCountries.find(
+						(tc) => tc.properties.ADMIN === properties.ADMIN,
+					)
+						? '#FFD700'
+						: '#FFFFFF'}
+					stroke="#444645"
+					role="button"
+					tabindex="0"
+					on:mouseover={(event) => handleMouseOver(event, properties.ADMIN)}
+					on:mouseout={handleMouseOut}
+					on:focus={(event) => handleMouseOver(event, properties.ADMIN)}
+					on:blur={handleMouseOut}
+				/>
+			{/each}
+		</svg>
+	</div>
 </div>
 
 <div class="total-visas">
-	Total de visas en {currentYear}: {totalVisas}
+	Total de visas en {currentYear}: {totals.find(
+		(total) => total.year === currentYear,
+	)?.Total || 0}
 </div>
 
 <style>
 	.title {
 		text-align: center;
-		margin-top: 3rem;
+		margin-top: 1rem;
 		font-size: 1.5rem;
+		color: #ffd700;
+	}
+
+	.controls {
+		text-align: center;
+		margin-top: 1rem;
+		color: #ffd700;
+	}
+
+	.map {
+		width: 100%;
+	}
+
+	.bar-chart {
+		width: 90%;
 	}
 
 	.total-visas {
 		text-align: center;
-		margin-top: 20px;
+		margin-top: 1rem;
 		font-size: 1.2rem;
+		color: #ffd700;
+	}
+
+	.visualization {
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		margin-top: 1rem;
+	}
+
+	.bar-chart {
+		display: inline-block;
+	}
+
+	.bar {
+		cursor: pointer;
 	}
 
 	path {
-		fill: rgb(218, 247, 166);
 		stroke: #444645;
 		cursor: pointer;
 	}
 
-	.bubble {
-		cursor: pointer;
-		transition:
-			transform 0.3s,
-			r 0.3s;
-	}
-
-	.bubble-text {
-		font: 0.8rem sans-serif;
-		pointer-events: none;
-		transition: font-size 0.3s;
-	}
-
-	.hover-text {
-		font: 1rem sans-serif;
-		pointer-events: none;
-		display: none;
-	}
-
-	.bubble-group:hover .bubble {
-		transform: scale(4);
-	}
-
-	.bubble-group:hover .bubble-text {
-		display: none;
-	}
-
-	.bubble-group:hover .hover-text {
-		display: block;
+	text {
 		font-size: 0.8rem;
 	}
 
-	.num-of-countries-selector {
-		text-align: center;
-		margin-top: 1rem;
-	}
+	@media (max-width: 1200px) {
+		.visualization {
+			flex-direction: column-reverse;
+		}
 
-	.num-of-countries-selector label {
-		margin: 0 0.3rem;
-		font-size: 1rem;
-	}
-
-	.num-of-countries-selector input {
-		margin-right: 0.3rem;
-	}
-
-	@media (max-width: 600px) {
 		.title {
 			font-size: 1.2rem;
 		}
 
-		.bubble-text {
-			font-size: 0.6rem;
+		.total-visas {
+			font-size: 1rem;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.map {
+			width: 100%;
+		}
+
+		.bar-chart {
+			width: 100%;
 		}
 	}
 </style>

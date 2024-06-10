@@ -12,11 +12,14 @@
 </script>
 
 <div class="app-container">
-	<div class="map-background">
-		<Map currentYear={currentYear} />
-	</div>
 	<div class="text-container">
-		<Texts onYearChange={handleYearChange} />
+		<Texts />
+	</div>
+	<div class="map-background">
+		<Map
+			currentYear={currentYear}
+			onYearChange={handleYearChange}
+		/>
 	</div>
 </div>
 
@@ -28,11 +31,11 @@
 	}
 
 	.map-background {
-		position: fixed;
-		top: 0;
-		left: 0;
+		position: relative;
 		width: 100%;
-		height: 100%;
+		height: auto;
+		margin-bottom: 2rem;
+		padding: 1rem;
 	}
 
 	.text-container {
@@ -40,5 +43,6 @@
 		width: 100%;
 		pointer-events: none;
 		color-scheme: dark;
+		padding: 1rem;
 	}
 </style>
