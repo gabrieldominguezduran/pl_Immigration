@@ -57,57 +57,68 @@
 		}
 	}
 
+	let bubbles = [];
+	$: if (topCountries.length > 0) {
+		bubbles = topCountries.map((country, i) => {
+			const centroid = pathGenerator.centroid(country);
+			return {
+				...country,
+				countryName: country.properties.ADMIN,
+				visaTotal: country.visaTotal,
+				centroid,
+				id: country.id,
+				rank: i + 1,
+			};
+		});
+	}
+
+	let polandCentroid;
+	$: {
+		const poland = countries.find(
+			(country) => country.properties.ADMIN === 'Poland',
+		);
+		if (poland) {
+			polandCentroid = pathGenerator.centroid(poland);
+		}
+	}
+
 	function handleYearChange(event) {
 		onYearChange(event.target.value);
 	}
 
-	function handleMouseOver(event, countryName) {
-		selectAll('.country-path').attr('opacity', (d) => {
-			if (!d || !d.properties) return 0.3;
-			return topCountries.find(
-				(tc) => tc.properties.ADMIN === d.properties.ADMIN,
-			)
-				? 1
-				: 0.3;
-		});
-		selectAll('.bar')
-			.attr('opacity', (d) => {
-				if (!d || !d.properties) return 0.5;
-				return d.properties.ADMIN === countryName ? 1 : 0.5;
-			})
-			.attr('fill', (d) => {
-				if (!d || !d.properties) return '#FE3713';
-				return d.properties.ADMIN === countryName ? '#FFD700' : '#FE3713';
-			});
-		selectAll('.country-path')
-			.attr('fill', (d) => {
-				if (!d || !d.properties) return '#FFFFFF';
-				return d.properties.ADMIN === countryName
-					? '#FFD700'
-					: topCountries.find(
-								(tc) => tc.properties.ADMIN === d.properties.ADMIN,
-						  )
-						? '#FFD700'
-						: '#FFFFFF';
-			})
-			.attr('stroke', (d) => {
-				if (!d || !d.properties) return '#444645';
-				return d.properties.ADMIN === countryName ? '#FFD700' : '#444645';
-			});
+	function handleMouseOver(event, countryCentroid) {
+		const element = event.currentTarget;
+		element.parentNode.appendChild(element);
+
+		if (polandCentroid) {
+			const svg = selectAll('svg');
+			svg
+				.append('line')
+				.attr('class', 'arrow-line')
+				.attr('x1', countryCentroid[0])
+				.attr('y1', countryCentroid[1])
+				.attr('x2', polandCentroid[0])
+				.attr('y2', polandCentroid[1])
+				.attr('stroke', '#77F13D')
+				.attr('stroke-width', 1)
+				.attr('marker-end', 'url(#arrow)')
+				.style('animation', 'draw 2s linear forwards');
+		}
 	}
 
-	function handleMouseOut() {
-		selectAll('.country-path')
-			.attr('fill', (d) => {
-				if (!d || !d.properties) return '#FFFFFF';
-				return topCountries.find(
-					(tc) => tc.properties.ADMIN === d.properties.ADMIN,
-				)
-					? '#FFD700'
-					: '#FFFFFF';
-			})
-			.attr('opacity', 1);
-		selectAll('.bar').attr('fill', '#FE3713').attr('opacity', 1);
+	function handleMouseOut(event) {
+		selectAll('.arrow-line').remove();
+	}
+
+	let firstPart = [];
+	let secondPart = [];
+	let thirdPart = [];
+	let fourPart = [];
+	$: if (topCountries.length > 0) {
+		firstPart = topCountries.slice(0, 5);
+		secondPart = topCountries.slice(5, 10);
+		thirdPart = topCountries.slice(10, 15);
+		fourPart = topCountries.slice(15, 20);
 	}
 </script>
 
@@ -131,59 +142,137 @@
 </div>
 
 <div class="visualization">
-	<svg
-		class="bar-chart"
-		width={width / 2}
-		height={height}
-	>
-		{#each topCountries as { properties, visaTotal }, i}
-			<rect
-				class="bar"
-				x={0}
-				y={i * 22}
-				width={visaTotal / 500}
-				height={20}
-				fill="#FFD700"
-				on:mouseover={(event) => handleMouseOver(event, properties.ADMIN)}
-				on:mouseout={handleMouseOut}
-				role="button"
-				tabindex="0"
-				on:focus={(event) => handleMouseOver(event, properties.ADMIN)}
-				on:blur={handleMouseOut}
-			/>
-			<text
-				x={visaTotal / 500 + 5}
-				y={i * 22 + 15}
-				fill="white">{properties.ADMIN}: {visaTotal}</text
-			>
-		{/each}
-	</svg>
 	<div class="map">
 		<svg
 			width="100%"
-			height="100%"
+			height="50%"
 			viewBox={`0 0 ${width} ${height}`}
 			preserveAspectRatio="xMidYMid meet"
 		>
+			<defs>
+				<marker
+					id="arrow"
+					markerWidth="8"
+					markerHeight="8"
+					refX="5"
+					refY="5"
+					orient="auto"
+					markerUnits="strokeWidth"
+				>
+					<path
+						d="M0,0 L0,10 L10,5 z"
+						fill="#77F13D"
+					/>
+				</marker>
+			</defs>
+
 			{#each countries as { id, path, properties }}
 				<path
 					class="country-path"
 					d={path}
-					fill={topCountries.find(
-						(tc) => tc.properties.ADMIN === properties.ADMIN,
-					)
-						? '#FFD700'
-						: '#FFFFFF'}
+					fill={properties.ADMIN === 'Poland'
+						? '#F0350D'
+						: topCountries.find(
+									(tc) => tc.properties.ADMIN === properties.ADMIN,
+							  )
+							? '#FFD700'
+							: '#FFFFFF'}
 					stroke="#444645"
 					role="button"
 					tabindex="0"
-					on:mouseover={(event) => handleMouseOver(event, properties.ADMIN)}
-					on:mouseout={handleMouseOut}
-					on:focus={(event) => handleMouseOver(event, properties.ADMIN)}
-					on:blur={handleMouseOut}
 				/>
 			{/each}
+
+			{#each bubbles as { countryName, visaTotal, centroid, id, rank }}
+				{#if centroid}
+					<g
+						transform={`translate(${centroid[0]}, ${centroid[1]})`}
+						class="bubble-group"
+						role="button"
+						tabindex="0"
+						on:mouseover={(event) => handleMouseOver(event, centroid)}
+						on:mouseout={handleMouseOut}
+						on:focus={(event) => handleMouseOver(event, centroid)}
+						on:blur={handleMouseOut}
+					>
+						<circle
+							r={8}
+							fill="rgba(254, 55, 13, 0.8)"
+							class="bubble bubble-{id}"
+						/>
+						<text
+							x="0"
+							y="7"
+							text-anchor="middle"
+							fill="#000"
+							dy="1rem"
+							class="bubble-text bubble-text-{id}"
+						>
+							<tspan
+								x="0"
+								dy="-.6em"
+								font-size="0.7em">{rank}</tspan
+							>
+						</text>
+						<text
+							x="0"
+							y={-8}
+							text-anchor="middle"
+							fill="#D4FE0D"
+							dy="0"
+							class="hover-text"
+						>
+							<tspan
+								x="0"
+								dy="-.6em"
+								font-size="0.7em">{rank}</tspan
+							>
+							<tspan
+								x="0"
+								dy="1.2em">{countryName}</tspan
+							>
+							<tspan
+								x="0"
+								dy="1.2em">Visas: {visaTotal}</tspan
+							>
+						</text>
+					</g>
+				{/if}
+			{/each}
 		</svg>
+	</div>
+</div>
+
+<div class="country-names">
+	<div class="first-part">
+		{#each firstPart as { properties, visaTotal }, i}
+			<div class="country">
+				{#if i < 10}
+					<span>{i + 1}. {properties.ADMIN}: {visaTotal}</span>
+				{/if}
+			</div>
+		{/each}
+	</div>
+	<div class="second-part">
+		{#each secondPart as { properties, visaTotal }, i}
+			<div class="country">
+				<span>{i + 6}. {properties.ADMIN}: {visaTotal}</span>
+			</div>
+		{/each}
+	</div>
+	<div class="third-part">
+		{#each thirdPart as { properties, visaTotal }, i}
+			<div class="country">
+				<span>{i + 11}. {properties.ADMIN}: {visaTotal}</span>
+			</div>
+		{/each}
+	</div>
+	<div class="four-part">
+		{#each fourPart as { properties, visaTotal }, i}
+			<div class="country">
+				<span>{i + 16}. {properties.ADMIN}: {visaTotal}</span>
+			</div>
+		{/each}
 	</div>
 </div>
 
@@ -209,10 +298,7 @@
 
 	.map {
 		width: 100%;
-	}
-
-	.bar-chart {
-		width: 90%;
+		height: 50%;
 	}
 
 	.total-visas {
@@ -229,11 +315,24 @@
 		margin-top: 1rem;
 	}
 
-	.bar-chart {
-		display: inline-block;
+	.country-names {
+		display: flex;
+		justify-content: space-around;
+		margin: 1rem auto;
 	}
 
-	.bar {
+	.first-part,
+	.second-part,
+	.third-part,
+	.four-part {
+		width: 23%;
+		text-align: left;
+	}
+
+	.country {
+		font-size: 1.2rem;
+		color: #ffd700;
+		margin-bottom: 0.5rem;
 		cursor: pointer;
 	}
 
@@ -242,8 +341,51 @@
 		cursor: pointer;
 	}
 
-	text {
+	.bubble {
+		cursor: pointer;
+		transition:
+			transform 0.3s,
+			r 0.3s;
+	}
+
+	.bubble-text {
+		font: 0.8rem sans-serif;
+		pointer-events: none;
+		transition: font-size 0.3s;
+	}
+
+	.hover-text {
+		font: 1rem sans-serif;
+		pointer-events: none;
+		display: none;
+	}
+
+	.bubble-group:hover .bubble {
+		transform: scale(8);
+	}
+
+	.bubble-group:hover .bubble-text {
+		display: none;
+	}
+
+	.bubble-group:hover .hover-text {
+		display: block;
 		font-size: 0.8rem;
+	}
+
+	.arrow-line {
+		stroke: rgba(244, 81, 81, 0.891);
+		stroke-width: 2px;
+		marker-end: url(#arrow);
+	}
+
+	@keyframes draw {
+		from {
+			stroke-dasharray: 0, 1000;
+		}
+		to {
+			stroke-dasharray: 1000, 0;
+		}
 	}
 
 	@media (max-width: 1200px) {
@@ -265,8 +407,17 @@
 			width: 100%;
 		}
 
-		.bar-chart {
-			width: 100%;
+		.country-names {
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.first-part,
+		.second-part,
+		.third-part,
+		.four-part {
+			width: 50%;
+			text-align: left;
 		}
 	}
 </style>
