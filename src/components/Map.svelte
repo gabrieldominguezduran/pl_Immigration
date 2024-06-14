@@ -89,25 +89,6 @@
 	function handleMouseOver(event, countryCentroid) {
 		const element = event.currentTarget;
 		element.parentNode.appendChild(element);
-
-		if (polandCentroid) {
-			const svg = selectAll('svg');
-			svg
-				.append('line')
-				.attr('class', 'arrow-line')
-				.attr('x1', countryCentroid[0])
-				.attr('y1', countryCentroid[1])
-				.attr('x2', polandCentroid[0])
-				.attr('y2', polandCentroid[1])
-				.attr('stroke', '#77F13D')
-				.attr('stroke-width', 1)
-				.attr('marker-end', 'url(#arrow)')
-				.style('animation', 'draw 2s linear forwards');
-		}
-	}
-
-	function handleMouseOut(event) {
-		selectAll('.arrow-line').remove();
 	}
 
 	let firstPart = [];
@@ -149,23 +130,6 @@
 			viewBox={`0 0 ${width} ${height}`}
 			preserveAspectRatio="xMidYMid meet"
 		>
-			<defs>
-				<marker
-					id="arrow"
-					markerWidth="8"
-					markerHeight="8"
-					refX="5"
-					refY="5"
-					orient="auto"
-					markerUnits="strokeWidth"
-				>
-					<path
-						d="M0,0 L0,10 L10,5 z"
-						fill="#77F13D"
-					/>
-				</marker>
-			</defs>
-
 			{#each countries as { id, path, properties }}
 				<path
 					class="country-path"
@@ -191,9 +155,7 @@
 						role="button"
 						tabindex="0"
 						on:mouseover={(event) => handleMouseOver(event, centroid)}
-						on:mouseout={handleMouseOut}
 						on:focus={(event) => handleMouseOver(event, centroid)}
-						on:blur={handleMouseOut}
 					>
 						<circle
 							r={8}
@@ -293,7 +255,7 @@
 	.controls {
 		text-align: center;
 		margin-top: 1rem;
-		color: #ffd700;
+		color: #fff;
 	}
 
 	.map {
@@ -371,12 +333,6 @@
 	.bubble-group:hover .hover-text {
 		display: block;
 		font-size: 0.8rem;
-	}
-
-	.arrow-line {
-		stroke: rgba(244, 81, 81, 0.891);
-		stroke-width: 2px;
-		marker-end: url(#arrow);
 	}
 
 	@keyframes draw {

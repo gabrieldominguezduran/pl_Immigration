@@ -12,9 +12,7 @@
 </script>
 
 <div class="app-container">
-	<div class="text-container">
-		<Texts />
-	</div>
+	<Texts />
 	<div class="map-background">
 		<Map
 			currentYear={currentYear}
@@ -28,6 +26,7 @@
 		position: relative;
 		height: 100vh;
 		scroll-behavior: smooth;
+		color-scheme: dark;
 	}
 
 	.map-background {
@@ -35,14 +34,6 @@
 		width: 100%;
 		height: auto;
 		margin-bottom: 2rem;
-		padding: 1rem;
-	}
-
-	.text-container {
-		position: relative;
-		width: 100%;
-		pointer-events: none;
-		color-scheme: dark;
 		padding: 1rem;
 	}
 </style>
