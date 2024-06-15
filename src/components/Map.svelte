@@ -405,6 +405,7 @@
 	.source-text a {
 		color: #ffd700;
 		text-decoration: none;
+		line-break: anywhere;
 	}
 
 	@media (max-width: 1200px) {
