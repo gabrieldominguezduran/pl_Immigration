@@ -106,9 +106,21 @@
 <div class="texts">
 	<h1>Crecimiento de la inmigración</h1>
 	<p class="description">
-		Polonia ha experimentado un aumento significativo en el número de
-		inmigrantes, con un notable incremento en los dos ultimos años de personas
-		provenientes de Asia y Sudamérica.
+		Se ha experimentado un aumento significativo en el número de inmigrantes,
+		con un notable incremento en los dos últimos años de personas provenientes
+		de Asia y Sudamérica.
+	</p>
+	<p class="description">
+		Polonia es el país de la Unión Europea que más visas de trabajo ha otorgado
+		a ciudadanos de países no pertenecientes a la Unión Europea en los últimos
+		años.
+	</p>
+	<p class="source-text">
+		Fuente: <a
+			href="https://ec.europa.eu/eurostat/databrowser/view/MIGR_RESFIRST__custom_11823928/default/bar?lang=en&page=time:2022"
+			target="_blank"
+			>https://ec.europa.eu/eurostat/databrowser/view/MIGR_RESFIRST__custom_11823928/default/bar?lang=en&page=time:2022</a
+		>
 	</p>
 	<div class="subtitle">
 		<h2>Los 20 países con más visas en el año {currentYear}</h2>
@@ -277,13 +289,12 @@
 		font-size: 1.5rem;
 		text-align: left;
 		color: #fff;
-		padding: 0.5rem 0;
+		padding: 0.5rem;
 		margin: 0;
-		margin-bottom: 3rem;
 	}
 	.subtitle {
 		text-align: center;
-		margin-top: 1rem;
+		margin: 2rem 0;
 		font-size: 1.5rem;
 		color: #ffd700;
 	}
@@ -381,6 +392,17 @@
 	.source a {
 		color: #ffd700;
 		text-decoration: none;
+	}
+	.source-text a {
+		color: #ffd700;
+		text-decoration: none;
+	}
+
+	.source-text {
+		text-align: left;
+		margin: 1rem 0 3rem;
+		font-size: 0.8rem;
+		color: #fff;
 	}
 
 	@media (max-width: 1200px) {
