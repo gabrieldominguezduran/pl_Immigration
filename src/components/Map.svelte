@@ -393,16 +393,18 @@
 		color: #ffd700;
 		text-decoration: none;
 	}
-	.source-text a {
-		color: #ffd700;
-		text-decoration: none;
-	}
 
 	.source-text {
 		text-align: left;
 		margin: 1rem 0 3rem;
 		font-size: 0.8rem;
 		color: #fff;
+		padding: 0.5rem;
+	}
+
+	.source-text a {
+		color: #ffd700;
+		text-decoration: none;
 	}
 
 	@media (max-width: 1200px) {
