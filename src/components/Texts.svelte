@@ -1,12 +1,7 @@
 <script>
-	import quotes from '../data/quotes.json';
 	import PopulationChart from './PopulationChart.svelte';
-	import Quote from './Quotes.svelte';
-
-	let groupedQuotes = {};
-	for (let year in quotes) {
-		groupedQuotes[year] = quotes[year];
-	}
+	import JobsChart from './JobsChart.svelte';
+	import QuotesChart from './QuotesChart.svelte';
 </script>
 
 <section class="title-secton">
@@ -26,26 +21,12 @@
 <section class="population-section">
 	<PopulationChart />
 </section>
+<section class="jobs-section">
+	<JobsChart />
+</section>
 <div class="texts-container">
 	<section class="quotes-section">
-		<div class="text">
-			{#each Object.keys(groupedQuotes) as year}
-				<div class="year-quote">
-					<h3>{year}</h3>
-					{#each groupedQuotes[year] as quote}
-						<div class="quote">
-							<Quote
-								author={quote.author}
-								position={quote.position_spanish}
-								quote={quote.quote_spanish}
-								source={quote.source}
-								source_link={quote.source_link}
-							/>
-						</div>
-					{/each}
-				</div>
-			{/each}
-		</div>
+		<QuotesChart />
 	</section>
 </div>
 
@@ -102,32 +83,6 @@
 		pointer-events: auto;
 	}
 
-	.text {
-		display: flex;
-		gap: 1rem;
-		margin: 0 auto;
-		color: #fff;
-	}
-
-	.year-quote {
-		margin-bottom: 2rem;
-	}
-
-	h3 {
-		color: #ffd700;
-		margin-bottom: 1rem;
-	}
-
-	.quote {
-		margin-bottom: 1rem;
-	}
-
-	@media (max-width: 1200px) {
-		.text {
-			flex-wrap: wrap;
-		}
-	}
-
 	@media (max-width: 1020px) {
 		.title-secton {
 			min-height: 40vh;
@@ -137,10 +92,6 @@
 			font-size: 3rem;
 			width: 100%;
 			padding: 2rem;
-		}
-
-		.text {
-			flex-direction: column;
 		}
 	}
 </style>

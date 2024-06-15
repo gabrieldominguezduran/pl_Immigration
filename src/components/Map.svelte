@@ -103,8 +103,16 @@
 	}
 </script>
 
-<div class="title">
-	<h1>Los 20 países con más visas en el año {currentYear}</h1>
+<div class="texts">
+	<h1>Crecimiento de la inmigración</h1>
+	<p class="description">
+		Polonia ha experimentado un aumento significativo en el número de
+		inmigrantes, con un notable incremento en los dos ultimos años de personas
+		provenientes de Asia y Sudamérica.
+	</p>
+	<div class="subtitle">
+		<h2>Los 20 países con más visas en el año {currentYear}</h2>
+	</div>
 </div>
 
 <div class="controls">
@@ -243,9 +251,37 @@
 		(total) => total.year === currentYear,
 	)?.Total || 0}
 </div>
+<p class="source">
+	Fuente: <a
+		href=" https://psz.praca.gov.pl/web/urzad-pracy/-/8180075-zezwolenia-na-prace-cudzoziemcow "
+		target="_blank"
+	>
+		https://psz.praca.gov.pl/web/urzad-pracy/-/8180075-zezwolenia-na-prace-cudzoziemcow
+	</a>
+</p>
 
 <style>
-	.title {
+	.texts {
+		text-align: center;
+		width: 60%;
+		margin: 2rem auto;
+	}
+
+	.texts h1 {
+		font-size: 3rem;
+		color: #ffd700;
+		margin-bottom: 2rem;
+	}
+
+	.description {
+		font-size: 1.5rem;
+		text-align: left;
+		color: #fff;
+		padding: 0.5rem 0;
+		margin: 0;
+		margin-bottom: 3rem;
+	}
+	.subtitle {
 		text-align: center;
 		margin-top: 1rem;
 		font-size: 1.5rem;
@@ -293,7 +329,7 @@
 
 	.country {
 		font-size: 1.2rem;
-		color: #ffd700;
+		color: #fff;
 		margin-bottom: 0.5rem;
 		cursor: pointer;
 	}
@@ -335,13 +371,16 @@
 		font-size: 0.8rem;
 	}
 
-	@keyframes draw {
-		from {
-			stroke-dasharray: 0, 1000;
-		}
-		to {
-			stroke-dasharray: 1000, 0;
-		}
+	.source {
+		text-align: center;
+		margin: 1rem 0 3rem;
+		font-size: 0.8rem;
+		color: #fff;
+	}
+
+	.source a {
+		color: #ffd700;
+		text-decoration: none;
 	}
 
 	@media (max-width: 1200px) {
@@ -355,6 +394,25 @@
 
 		.total-visas {
 			font-size: 1rem;
+		}
+	}
+
+	@media (max-width: 1024px) {
+		.texts {
+			width: 90%;
+		}
+		.texts h1 {
+			text-align: left;
+			font-size: 2rem;
+		}
+
+		.subtitle {
+			font-size: 1.2rem;
+		}
+
+		.description {
+			font-size: 1.2rem;
+			padding: 0;
 		}
 	}
 

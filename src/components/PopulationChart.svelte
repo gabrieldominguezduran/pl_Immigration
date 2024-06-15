@@ -67,15 +67,23 @@
 </script>
 
 <main class="chart-container">
-	<h1>Datos Demográficos de Polonia</h1>
-	<p class="description">
-		Polonia enfrenta desafíos demográficos significativos, incluyendo una
-		disminución de la población y una baja tasa de natalidad. La emigración ha
-		reducido la población activa, creando un vacío en el mercado laboral.
-	</p>
+	<div class="texts">
+		<h1>Datos demográficos de Polonia</h1>
+		<p class="description">
+			Polonia enfrenta desafíos demográficos significativos, incluyendo una
+			disminución de la población y una baja tasa de natalidad. La emigración ha
+			reducido la población activa, creando un vacío en el mercado laboral.
+		</p>
+	</div>
 	<div class="buttons">
-		<button on:click={() => toggleData('population')}>Población Total</button>
-		<button on:click={() => toggleData('age')}>Edad Mediana</button>
+		<button
+			class:selected={selectedData === 'population'}
+			on:click={() => toggleData('population')}>Población total</button
+		>
+		<button
+			class:selected={selectedData === 'age'}
+			on:click={() => toggleData('age')}>Edad media</button
+		>
 	</div>
 	{#if dataset.length === 0}
 		<p>Loading...</p>
@@ -210,19 +218,23 @@
 		margin-top: 20px;
 	}
 
-	.chart-container h1 {
+	.texts {
+		width: 60%;
+	}
+
+	.texts h1 {
 		text-align: center;
 		margin-bottom: 2rem;
-		font-size: 2rem;
+		font-size: 3rem;
 		color: #ffd700;
 	}
 
 	.description {
 		text-align: left;
 		margin-bottom: 2rem;
-		font-size: 1.2rem;
+		font-size: 1.5rem;
 		color: #fff;
-		padding: 0 5rem;
+		padding: 0 8rem;
 	}
 
 	.buttons {
@@ -241,6 +253,11 @@
 	}
 
 	button:hover {
+		opacity: 0.8;
+		transform: scale(1.05);
+	}
+
+	.selected {
 		background-color: #ffd700;
 		color: #000;
 	}
@@ -251,16 +268,31 @@
 		color: #fff;
 	}
 
+	.source a {
+		color: #ffd700;
+		text-decoration: none;
+	}
+
 	g:hover text {
 		opacity: 1;
 	}
 
-	@media (max-width: 768px) {
+	@media (max-width: 1024px) {
 		.chart-container {
 			padding: 0 1rem;
 		}
 
+		.texts h1 {
+			text-align: left;
+			font-size: 2rem;
+		}
+
+		.texts {
+			width: 90%;
+		}
+
 		.description {
+			font-size: 1.2rem;
 			padding: 0;
 		}
 	}
